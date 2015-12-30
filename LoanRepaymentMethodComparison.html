@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<head>
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+<form name="loanInfo" onsubmit="processForm();">
+    Current loan amount: $
+    <input type="text" name="loanAmount"> 
+    <br>
+    What day was the loan at this amount?: 
+    <input type="date" name="currentLoanDate">
+    <br>
+    What day of month is the loan payment on?: 
+    <input type="number" name="monthlyPaymentDate" min="1" max="28">
+    <br>
+    &nbsp;(max choice of 28 days because of February)
+    <br>
+    Annual Percentage Rate (APR): 
+    <input type="text" id="apr">%
+    <input type="submit" value="Submit">
+    <br><br>
+  </form>
+  
+  <div id="myDiv" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+  <script>
+    function processForm() {
+      apr = document.getElementById("apr");
+      apr = apr.value;
+      alert(apr + " " + "hello");
+    }
+    
+    // var apr = 10;
+    // var apr = document.getElementById("apr").value;
+    // function aprTOdpr(apr) { 
+    //   var dpr = apr/365;
+    //   return dpr;
+    //}
+    
+    // var data = [
+    //   {
+    //    x: ['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'],
+    //    y: [1, 3, 6],
+    //    type: 'scatter'
+    //   }
+    // ];
+
+    var trace0 = {
+      x: ['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'],
+      y: [1, 3, 6],
+      type: 'scatter'
+    };
+
+    var trace1 = {
+      x: ['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'],
+      y: [4, 7, 9],
+      type: 'scatter'
+    };
+
+  var data = [trace0, trace1];
+  Plotly.newPlot('myDiv', data);
+  </script>
+</body>
