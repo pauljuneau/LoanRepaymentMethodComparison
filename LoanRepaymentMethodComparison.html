@@ -61,10 +61,13 @@
       sessionStorage.monthlyPaymentDate = monthlyPaymentDate;
       sessionStorage.apr = apr;
       sessionStorage.timeDuration = timeDuration;
-
+	  
+	  /*how to return elements to webpage
       //Retrieve
       document.getElementById("result").innerHTML = sessionStorage.currentLoanDate;
-
+	  */
+	  timeSpanGenerator(sessionStorage.currentLoanDate);
+	  loanCalc(sessionStorage.loanAmount);
       Plotly.newPlot('myDiv', data);
     }
 
@@ -77,16 +80,110 @@
     //   return dpr;
     //}
     
+	/*This function is used to generate time span.
+	 *The time span is set 100 years or 36500 days. 
+	 *It takes the currentLoanDate entered by user 
+	 *and generates the time span from there.
+	 */
+	function timeSpanGenerator(currentLoanDate) {
+		/*thought I needed this for leap year calculations
+		//days in months
+		var january = 31;
+		var february = 28;
+		var february2 = 29; //leap year, every 4 years
+		var march = 31;
+		var april = 30;
+		var may = 31;
+		var june = 30;
+		var july = 31;
+		var august = 31;
+		var september = 30;
+		var october = 31;
+		var november = 30;
+		var december = 31;
+		*/
+		
+		console.log(currentLoanDate);
+		var strCurrentLoanDate = currentLoanDate.toString();
+		var arrCurrentLoanDate = strCurrentLoanDate.split("-");
+		console.log(arrCurrentLoanDate);
+		
+		var year = parseInt(arrCurrentLoanDate[0]);
+		/*Determine Leap Years
+		var nxtLeapYr = year;
+		
+		var isLeap = new Date(nxtLeapYr, 1, 29).getMonth() == 1;
+		if(isLeap != 1) {
+			do {
+				console.log(nxtLeapYr);
+				nxtLeapYr++;
+				isLeap = new Date(nxtLeapYr, 1, 29).getMonth() == 1;
+			}
+			while(isLeap != 1)
+		} */
+		
+		console.log(year);
+		
+		//remember: January=0, February=1, and so on
+		var month = parseInt(arrCurrentLoanDate[1]) - 1;
+		console.log(month);
+		
+		var day = parseInt(arrCurrentLoanDate[2]);
+		console.log(day);
+		
+		/*
+		var theDate = new Date(year, month, day);
+		var myNewDate = new Date(theDate);
+		myNewDate.setDate(myNewDate.getDate() + 29);
+		console.log(myNewDate);	
+		
+		var month = myNewDate.getUTCMonth() +1;
+		var day = myNewDate.getUTCDate();
+		var year = myNewDate.getUTCFullYear();
+		
+		newdate = year + "-" + month + "-" + day;
+		console.log(newdate);
+		*/
+		
+		var t = [currentLoanDate];
+		console.log(t);
+		//100 years = 36500 days
+		for (var i = 1; i< 400; i++) {
+			var theDate = new Date(year, month, day);
+			theDate.setDate(theDate.getDate() + 1);
+			//remember: January=0, February=1, and so on. So add one to month
+			var month = theDate.getMonth() +1;
+			var day = theDate.getDate();
+			var year = theDate.getFullYear();
+			newdate = year + "-" + month + "-" + day;
+			month--;
+			t.push(newdate);
+		}
+		console.log(t);
+		return t;
+	}
+	
+	function loanCalc(loanAmount) {
+		console.log(loanAmount);
+		var loanAmount = Number(loanAmount);
+		var p = [loanAmount];
+		console.log(p);
+		
+	}
+	function test() {
+		var t = ['2016-1-04', '2016-2-04', '2016-2-24'];
+		return t;
+	}
 
     var dailyTrace = {
-      x: [sessionStorage.currentLoanDate, '2015-11-04', '2015-12-04'],
+      x: test(),
       y: [1, 3, 6],
       name: 'Daily Payments',
       type: 'scatter'
     };
 
     var monthlyTrace = {
-      x: [sessionStorage.currentLoanDate, '2015-11-04', '2015-12-04'],
+      x: [sessionStorage.currentLoanDate, '2016-02-04', '2016-02-24'],
       y: [4, 7, 9],
       name: 'Monthly Payments',
       type: 'scatter'
