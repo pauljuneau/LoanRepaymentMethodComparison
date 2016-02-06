@@ -18,6 +18,12 @@
     <br>
     &nbsp;(max choice of 28 days because of February)
     <br>
+	How much is the minimum required monthly payment?:
+	<input type="text" id="monthlyPaymentAmount">
+	<br>
+	How much would the daily payment be?:
+	<input type="text" id="dailyPaymentAmount">
+	<br>
     Annual Percentage Rate (APR): 
     <input type="text" id="apr">%
     <br>
@@ -46,6 +52,12 @@
 
       monthlyPaymentDate = document.getElementById("monthlyPaymentDate");
       monthlyPaymentDate = monthlyPaymentDate.value;
+	  
+	  monthlyPaymentAmount = document.getElementById("monthlyPaymentAmount");
+	  monthlyPaymentAmount = monthlyPaymentAmount.value;
+	  
+	  dailyPaymentAmount = document.getElementById("dailyPaymentAmount");
+	  dailyPaymentAmount = dailyPaymentAmount.value;
 
       apr = document.getElementById("apr");
       apr = apr.value;
@@ -53,21 +65,37 @@
       timeDuration = document.getElementById("timeDuration");
       timeDuration = timeDuration.value;  
 
-      alert(loanAmount + ", " + currentLoanDate + ", " + monthlyPaymentDate + ", " + apr + ", " + timeDuration);
+      alert(loanAmount + ", " + currentLoanDate + ", " + monthlyPaymentDate + ", " + monthlyPaymentAmount + ", " + dailyPaymentAmount +", " + apr + ", " + timeDuration);
 
       //Store
       sessionStorage.loanAmount = loanAmount;
+	  loanAmount = sessionStorage.loanAmount;
+	  
       sessionStorage.currentLoanDate = currentLoanDate;
+	  currentLoanDate = sessionStorage.currentLoanDate;
+	  
       sessionStorage.monthlyPaymentDate = monthlyPaymentDate;
+	  monthlyPaymentDate = sessionStorage.monthlyPaymentDate;
+	  
+	  sessionStorage.monthlyPaymentAmount = monthlyPaymentAmount;
+	  monthlyPaymentAmount = sessionStorage.monthlyPaymentAmount;
+	  
+	  sessionStorage.dailyPaymentAmount = dailyPaymentAmount;
+	  dailyPaymentAmount = sessionStorage.dailyPaymentAmount;
+	  
       sessionStorage.apr = apr;
+	  apr = sessionStorage.apr;
+	  
       sessionStorage.timeDuration = timeDuration;
+	  timeDuration = sessionStorage.timeDuration;
+	  
 	  
 	  /*how to return elements to webpage
       //Retrieve
       document.getElementById("result").innerHTML = sessionStorage.currentLoanDate;
 	  */
-	  timeSpanGenerator(sessionStorage.currentLoanDate);
-	  loanCalc(sessionStorage.loanAmount);
+	  var t = timeSpanGenerator(currentLoanDate, timeDuration);
+	  loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount);
       Plotly.newPlot('myDiv', data);
     }
 
@@ -81,46 +109,19 @@
     //}
     
 	/*This function is used to generate time span.
-	 *The time span is set 100 years or 36500 days. 
+	 *The time span (years) is processed from the user. 
 	 *It takes the currentLoanDate entered by user 
 	 *and generates the time span from there.
 	 */
-	function timeSpanGenerator(currentLoanDate) {
-		/*thought I needed this for leap year calculations
-		//days in months
-		var january = 31;
-		var february = 28;
-		var february2 = 29; //leap year, every 4 years
-		var march = 31;
-		var april = 30;
-		var may = 31;
-		var june = 30;
-		var july = 31;
-		var august = 31;
-		var september = 30;
-		var october = 31;
-		var november = 30;
-		var december = 31;
+	function timeSpanGenerator(currentLoanDate, timeDuration) {
+		/*Acquiring function variables 
 		*/
-		
-		console.log(currentLoanDate);
+		console.log(currentLoanDate + ", " + timeDuration);
 		var strCurrentLoanDate = currentLoanDate.toString();
 		var arrCurrentLoanDate = strCurrentLoanDate.split("-");
 		console.log(arrCurrentLoanDate);
 		
 		var year = parseInt(arrCurrentLoanDate[0]);
-		/*Determine Leap Years
-		var nxtLeapYr = year;
-		
-		var isLeap = new Date(nxtLeapYr, 1, 29).getMonth() == 1;
-		if(isLeap != 1) {
-			do {
-				console.log(nxtLeapYr);
-				nxtLeapYr++;
-				isLeap = new Date(nxtLeapYr, 1, 29).getMonth() == 1;
-			}
-			while(isLeap != 1)
-		} */
 		
 		console.log(year);
 		
@@ -131,24 +132,18 @@
 		var day = parseInt(arrCurrentLoanDate[2]);
 		console.log(day);
 		
-		/*
-		var theDate = new Date(year, month, day);
-		var myNewDate = new Date(theDate);
-		myNewDate.setDate(myNewDate.getDate() + 29);
-		console.log(myNewDate);	
+		var timeDurationYears = parseInt(timeDuration);
+		var timeDurationDays =  timeDurationYears * 365;
 		
-		var month = myNewDate.getUTCMonth() +1;
-		var day = myNewDate.getUTCDate();
-		var year = myNewDate.getUTCFullYear();
 		
-		newdate = year + "-" + month + "-" + day;
-		console.log(newdate);
-		*/
-		
+		/*Put currentLoanDate as first element in array, 't'. 
+		*From the day entered to the last day for calculated timeDurationDays, 
+		* generate date and push onto array, 't'. 
+		*/		
 		var t = [currentLoanDate];
 		console.log(t);
-		//100 years = 36500 days
-		for (var i = 1; i< 400; i++) {
+		
+		for (var i = 0; i< timeDurationDays; i++) {
 			var theDate = new Date(year, month, day);
 			theDate.setDate(theDate.getDate() + 1);
 			//remember: January=0, February=1, and so on. So add one to month
@@ -163,15 +158,61 @@
 		return t;
 	}
 	
-	function loanCalc(loanAmount) {
+	function loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount) {
+		console.log(t);
+		console.log(apr);
 		console.log(loanAmount);
-		var loanAmount = Number(loanAmount);
-		var p = [loanAmount];
-		console.log(p);
+		console.log(dailyPaymentAmount);
+		console.log(monthlyPaymentDate);
 		
+		//let dpr be daily percentage rate 
+		var dpr = (apr/100)/365;
+		var loanAmount = Number(loanAmount);
+		var monthlyPaymentAmount = Number(monthlyPaymentAmount);
+		var additionalMonthlyPaymentAmount = Number(additionalMonthlyPaymentAmount);
+		var dailyPaymentAmount = Number(dailyPaymentAmount);
+		
+		/*Determine what day it is, and what month, and count how many incrementations it takes to reach monthlyPaymentDate
+		 *Generate variable that determines what date the next payment is on
+		 *Increment through loop to compare strings and count iterations until string match for next payment date.
+		 */
+		
+		//These will be graphed on the y axis to the dailyTrace and monthlyTrace respectively
+		var principalDaily = [loanAmount];
+		var principalMonthly = 	[loanAmount];
+		
+		var additionalMonthlyPaymentAmount = dailyPaymentAmount;
+		var count = 0;
+		
+		/*
+		*/
+		
+		var currentDay = parseInt(t[count].split("-")[2]);
+		principalDaily[count] = principalDaily[count] - dailyPaymentAmount;
+		
+		do {
+			if (currentDay == monthlyPaymentDate) {
+				principalDaily[count] = principalDaily[count - 1] + principalDaily[count - 1]*dpr - monthlyPaymentAmount - dailyPaymentAmount;
+				principalMonthly[count] = principalMonthly[count - 1] + principalMonthly[count - 1]*dpr - monthlyPaymentAmount - additionalMonthlyPaymentAmount;
+				principalDaily.push(principalDaily[count]);
+				principalMonthly.push(principalMonthly[count]);
+			}
+			count++;
+			additionalMonthlyPaymentAmount = dailyPaymentAmount + dailyPaymentAmount*count;
+			principalDaily[count] = principalDaily[count - 1] + principalDaily[count - 1]*dpr - dailyPaymentAmount;
+			principalDaily.push(principalDaily[count]);
+			principalMonthly[count] = principalMonthly[count - 1] + principalMonthly[count - 1]*dpr;
+			principalMonthly.push(principalMonthly[count]);
+			
+		} while (currentDay != monthlyPaymentDate && count < t.length)
+		
+		var y = [principalDaily, principalMonthly];
+		
+		console.log(y);
+		return y;
 	}
 	function test() {
-		var t = ['2016-1-04', '2016-2-04', '2016-2-24'];
+		var t = ["2016-1-04", "2016-2-04", "2016-2-24"];
 		return t;
 	}
 
