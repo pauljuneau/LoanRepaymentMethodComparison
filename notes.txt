@@ -11,7 +11,7 @@ Session storage works well to temporarily store variables. The variables will cl
 Function, timeSpanGenerator, generates a time span of 100 years starting form the current loan date entered by the user.
 
 --What needs to be done:
-+PSUEDOCODE for loanCalc(t, apr, loanAmount, monthlyPaymentAmount, dailyPaymentAmount):
++
 +calculate additional monthly payments: SUM of all remaining dailyPayments in that billing cycle time span. 
 
 +Determine the mathematical function for compounding interest:
