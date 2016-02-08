@@ -10,9 +10,11 @@ Session storage works well to temporarily store variables. The variables will cl
 
 Function, timeSpanGenerator, generates a time span of 100 years starting form the current loan date entered by the user.
 
+Mathematical function for principal daily and monthly is correct.
+
 --What needs to be done:
-+
-+calculate additional monthly payments: SUM of all remaining dailyPayments in that billing cycle time span. 
++Something is wrong with do.. while loop in loanCalc function. Need to work on algorithm. 
+The loop increments possibly one to many and .split tries to execute on t[count = x] = null. 
 
 +Determine the mathematical function for compounding interest:
 let loan amount = P (for principal)
