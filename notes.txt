@@ -1,0 +1,24 @@
+--Test values:
+loan amount: 13400
+day: 01/31/2016
+Payment date: 26
+APR: 7.99
+Time duration: 100 years <-- built in time span.
+
+--What is currently functional
+Session storage works well to temporarily store variables. The variables will clear once the page is refreshed. 
+
+Function, timeSpanGenerator, generates a time span of 100 years starting form the current loan date entered by the user.
+
+Mathematical function for principal daily and monthly is correct.
+
+--What needs to be done:
++Something is wrong with do.. while loop in loanCalc function. Need to work on algorithm. 
+The loop increments possibly one to many and .split tries to execute on t[count = x] = null. 
+
++Determine the mathematical function for compounding interest:
+let loan amount = P (for principal)
+
+P(t) = P(t-1) + P(t-1)*DPR
+
++

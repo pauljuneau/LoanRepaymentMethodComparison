@@ -1,31 +1,3 @@
-<<<<<<< HEAD
-<!doctype html>
-
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-
-  <title>The HTML5 Page</title>
-  <meta name="description" content="The HTML5 Herald">
-  <meta name="author" content="SitePoint">
-
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
-
-  <!--[if lt IE 9]>
-  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-</head>
-
-<body>
-  <script src="js/scripts.js"></script>
-
-  <p>This is for the home page of LoanRepaymentMethodComparison</p>
-<a href="LoanRepaymentMethodComparison.html">
-This is a link to LoanRepaymentMethodComparison.html
-</a>
-</body>
-</html>
-=======
 <!DOCTYPE html>
 <head>
   <!-- Plotly.js -->
@@ -120,13 +92,13 @@ This is a link to LoanRepaymentMethodComparison.html
       //Retrieve
       document.getElementById("result").innerHTML = sessionStorage.currentLoanDate;
 	  */
-	  //debugging
 	  //var t = timeSpanGenerator(currentLoanDate, timeDuration);
 	  
+	  //debugging
 	  var t = test();
 	  console.log(t);
 	  
-	  loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount);
+	  //loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount);
       Plotly.newPlot('myDiv', data);
     }
 
@@ -158,8 +130,8 @@ This is a link to LoanRepaymentMethodComparison.html
 		
 		var timeDurationYears = parseInt(timeDuration);
 		var timeDurationDays =  timeDurationYears * 365;
-		//debugging
-		timeDurationDays = 35;
+		/*debugging
+		timeDurationDays = 40;*/
 		
 		/*Put currentLoanDate as first element in array, 't'. 
 		*From the day entered to the last day for calculated timeDurationDays, 
@@ -204,8 +176,8 @@ This is a link to LoanRepaymentMethodComparison.html
 		//These will be graphed on the y axis to the dailyTrace and monthlyTrace respectively
 		var principalDaily = [loanAmount];
 		var principalMonthly = 	[loanAmount];
-		console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
-		console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);
+		/*console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
+		console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);*/
 		
 		//Make sure that the same total payment amount is being put towards principalDaily and principalMonthly
 		var additionalMonthlyPaymentAmount = dailyPaymentAmount;
@@ -215,40 +187,39 @@ This is a link to LoanRepaymentMethodComparison.html
 			return currentDay;
 			}
 		console.log("currentDay = " + currentDayFunction(t,count) + ", count = " + count);
-		console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);
+		/*console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);*/
 		
 		//Initialize day 1 (count = 0) of loan repayments with a daily payment
 		principalDaily[count] = principalDaily[count] - dailyPaymentAmount;
-		console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
-		console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);
+		/*console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
+		console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);*/
 		//increment to next day
 		count++;
 		
 		do {
-			console.log("currentDay = " + currentDayFunction(t,count) + ", count = " + count);
+			//console.log("currentDay = " + currentDayFunction(t,count) + ", count = " + count);
 			
 			//aggregate dailyPaymentAmount to additionalMonthlyPaymentAmount 
 			additionalMonthlyPaymentAmount = additionalMonthlyPaymentAmount + dailyPaymentAmount;
-			console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);
+			//console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);
 			
 			principalDaily[count] = principalDaily[count - 1] + principalDaily[count - 1]*dpr - dailyPaymentAmount;
 			principalMonthly[count] = principalMonthly[count - 1] + principalMonthly[count - 1]*dpr;
-			console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
-			console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly); 
+			/*console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
+			console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly); */
 			count++;
 			if (currentDayFunction(t,count) == monthlyPaymentDate) {
-				console.log("currentDay = " + currentDayFunction(t,count) + ", count = " + count);
-				console.log("in if block");
+				//console.log("currentDay = " + currentDayFunction(t,count) + ", count = " + count);
 				additionalMonthlyPaymentAmount = additionalMonthlyPaymentAmount + dailyPaymentAmount;
-				console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);
+				//console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);
 				principalDaily[count] = principalDaily[count - 1] + principalDaily[count - 1]*dpr - monthlyPaymentAmount - dailyPaymentAmount;
 				principalMonthly[count] = principalMonthly[count - 1] + principalMonthly[count - 1]*dpr - monthlyPaymentAmount - additionalMonthlyPaymentAmount;
-				console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
-				console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);
+				/*console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
+				console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);*/
 				count++;
 			}
 		} while (count < t.length)
-		console.log("success");
+		
 		var y = [principalDaily, principalMonthly];
 		
 		console.log(y);
@@ -261,7 +232,7 @@ This is a link to LoanRepaymentMethodComparison.html
 	}
 	
 	/*var yDailyTrace = loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount)[0];
-	var yMonthlyTrace = loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount)[1]; */
+	var yMonthlyTrace = loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount)[1];*/
 
     var dailyTrace = {
       x: test(),
@@ -281,4 +252,3 @@ This is a link to LoanRepaymentMethodComparison.html
   // Plotly.newPlot('myDiv', data);
   </script>
 </body>
->>>>>>> master
