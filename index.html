@@ -1,47 +1,134 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
+<title>Loan Repayment Method Comparison Graph</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link href='https://fonts.googleapis.com/css?family=Ubuntu|Raleway' rel='stylesheet' type='text/css'>
+  <!--how to link to external css sheet:<link rel="stylesheet" href="main.css" />-->	
+  <!--how to link to external js: <script src="myscripts.js"></script> can be placed in body as well-->
   <!-- Plotly.js -->
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    #description {
+		padding-top:50px;
+		height: 60vh;
+		font-weight: bold;
+		font-size: large;	
+		border-bottom: 4px hidden #0d0d0d; 
+	}
+    
+	#graph {
+		padding-bottom:50px;
+		height: 60vh;
+	}
+	/*Fonts*/
+	.ralewayFont {
+		font-family: 'Raleway', sans-serif;
+		font-size: 4.5vw;
+	}
+	
+	.ubuntuFont {
+		font-family: 'Ubuntu', sans-serif;
+	}
+  </style>
 </head>
 
 <body>
- <div id="result"></div>
- <form>
-    Current loan amount: $
-    <input type="text" id="loanAmount"> 
-    <br>
-    What day was the loan at this amount?: 
-    <input type="date" id="currentLoanDate">
-    <br>
-    What day of month is the loan payment on?: 
-    <input type="number" id="monthlyPaymentDate" min="1" max="28">
-    <br>
-    &nbsp;(max choice of 28 days because of February)
-    <br>
-	How much is the minimum required monthly payment?:
-	<input type="text" id="monthlyPaymentAmount">
-	<br>
-	How much would the daily payment be?:
-	<input type="text" id="dailyPaymentAmount">
-	<br>
-    Annual Percentage Rate (APR): 
-    <input type="text" id="apr">%
-    <br>
-    Time duration, in years, desired to model the differing payment methods:
-    <input type="number" id="timeDuration" min="1" max="100">
-    <br> 
-    <input type="button" id="button" value="Save">
-    <br><br>
- </form>
-	
-  <div id="myDiv" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="#home" style="font-size:13px">Paul Juneau Engineering Portfolio</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="pauljuneau.github.io">Home</a></li>
+          <li><a href="pauljuneau.github.io#about">About</a></li>
+          <li><a href="pauljuneau.github.io#portfolio">Portfolio</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <nav class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="https://www.linkedin.com/in/pauljuneau" style="font-size:13px">CONTACT</a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a target="_blank" href="https://www.linkedin.com/in/pauljuneau" class ="btn btn-primary btn-sm"><i class="fa fa-linkedin-square"></i>  
+  		  </a>
+  	  </li>
+        <li><a href="mailto:pauljuneauengineer@gmail.com?Subject=Hello" target="_blank" class="btn btn-default btn-sm"><i class="fa fa-envelope fa-fw"></i>pauljuneauengineer@gmail.com
+  		  </a>
+  	  </li>
+      </ul>
+    </div>
+  </nav>
+  
+  <div id="description" class="container-fluid">
+    <center><h1 class="ralewayFont">Loan Repayment Method Comparison Graph</h1></center>      
+    <p class="ubuntuFont">This is a dynamic graph that computes the loan amount over time for two scenarios and graphs both data sets. 
+	<br><br>
+	Scenario A: Pay loan once a month at a fixed amount.
+	<br><br>
+	Scenario B: Pay the same amount as Scenario A, but split up the payment into incremental daily payments.
+	</p>
+  </div>
+  
+  <div id="result" class="container-fluid"></div>
+  
+  <div id="userForm" class="container-fluid">
+   <form>
+      Current loan amount: $
+      <input type="text" id="loanAmount"> 
+      <br>
+      What day was the loan at this amount?: 
+      <input type="date" id="currentLoanDate">
+      <br>
+      What day of month is the loan payment on?: 
+      <input type="number" id="monthlyPaymentDate" min="1" max="28">
+      <br>
+      &nbsp;(max choice of 28 days because of February)
+      <br>
+  	How much is the minimum required monthly payment?:
+  	<input type="text" id="monthlyPaymentAmount">
+  	<br>
+  	How much would the daily payment be?:
+  	<input type="text" id="dailyPaymentAmount">
+  	<br>
+      Annual Percentage Rate (APR): 
+      <input type="text" id="apr">%
+      <br>
+      Time duration, in years, desired to model the differing payment methods:
+      <input type="number" id="timeDuration" min="1" max="100">
+      <br> 
+      <input type="button" id="button" value="Save">
+      <br><br>
+   </form>
+  </div>	
+  
+  <div id="graph" class="container-fluid">
+    <div id="myDiv" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+  </div>
+  
   <script>
     function doFirst() {
       var button = document.getElementById("button");
-      button.addEventListener("click", saveCrap, false);
+      button.addEventListener("click", saveInput, false);
     }
 
-    function saveCrap() {
+    function saveInput() {
       loanAmount = document.getElementById("loanAmount");
       loanAmount = loanAmount.value;
 
@@ -98,7 +185,7 @@
 	  var t = test();
 	  console.log(t);
 	  
-	  loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount);
+	  //loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount);
       Plotly.newPlot('myDiv', data);
     }
 
@@ -250,6 +337,6 @@
     };
 
   var data = [dailyTrace, monthlyTrace];
-  // Plotly.newPlot('myDiv', data);
+  //Plotly.newPlot('myDiv', data);
   </script>
 </body>
