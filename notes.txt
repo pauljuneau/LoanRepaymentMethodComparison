@@ -1,24 +1,3 @@
---Test values:
-loan amount: 13400
-day: 01/31/2016
-Payment date: 26
-APR: 7.99
-Time duration: 100 years <-- built in time span.
-
---What is currently functional
-Session storage works well to temporarily store variables. The variables will clear once the page is refreshed. 
-
-Function, timeSpanGenerator, generates a time span of 100 years starting form the current loan date entered by the user.
-
-Mathematical function for principal daily and monthly is correct.
-
---What needs to be done:
-+Something is wrong with do.. while loop in loanCalc function. Need to work on algorithm. 
-The loop increments possibly one to many and .split tries to execute on t[count = x] = null. 
-
-+Determine the mathematical function for compounding interest:
-let loan amount = P (for principal)
-
-P(t) = P(t-1) + P(t-1)*DPR
-
-+
+Daily vs Monthly Payment observations:
+The "race" results to see which payment method, daily versus monthly, differs based on what day of the month you start your daily payments.
+For example if the monthly payment were to have automatically withdrawn from your account on the 26th of the month, and you start daily payments on the 24th, then the total amount put towards your loans that month is a lot lower than if you were to just have done the monthly payment. This is because there may only be 4 days remaining in the month, and four multiplied by your daily payment is much less than your montly payment.

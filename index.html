@@ -79,15 +79,13 @@
   
   <div id="description" class="container-fluid">
     <center><h1 class="ralewayFont">Loan Repayment Method Comparison Graph</h1></center>      
-    <p class="ubuntuFont">This is a dynamic graph that computes the loan amount over time for two scenarios and graphs both data sets. 
+    <p class="ubuntuFont">Provide loan payment details below and click save. This will generate a graph that models payments over time for monthly and daily payments. 
 	<br><br>
-	Scenario A: Pay loan once a month at a fixed amount.
+	Monthly Payments: Pay loan once a month at a fixed amount based on yearly total payment.
 	<br><br>
-	Scenario B: Pay the same amount as Scenario A, but split up the payment into incremental daily payments.
+	Daily Payments: Pay loan daily at a fixed amount based on yearly total payment.
 	</p>
   </div>
-  
-  <div id="result" class="container-fluid"></div>
   
   <div id="userForm" class="container-fluid">
    <form>
@@ -102,12 +100,9 @@
       <br>
       &nbsp;(max choice of 28 days because of February)
       <br>
-  	How much is the minimum required monthly payment?:
-  	<input type="text" id="monthlyPaymentAmount">
-  	<br>
-  	How much would the daily payment be?:
-  	<input type="text" id="dailyPaymentAmount">
-  	<br>
+	  What would your yearly payment amount be?:
+	  <input type="text" id="yearlyPaymentAmount">
+	  <br>
       Annual Percentage Rate (APR): 
       <input type="text" id="apr">%
       <br>
@@ -139,19 +134,17 @@
       monthlyPaymentDate = document.getElementById("monthlyPaymentDate");
       monthlyPaymentDate = monthlyPaymentDate.value;
 	  
-	  monthlyPaymentAmount = document.getElementById("monthlyPaymentAmount");
-	  monthlyPaymentAmount = monthlyPaymentAmount.value;
 	  
-	  dailyPaymentAmount = document.getElementById("dailyPaymentAmount");
-	  dailyPaymentAmount = dailyPaymentAmount.value;
-
+	  yearlyPaymentAmount = document.getElementById("yearlyPaymentAmount");
+	  yearlyPaymentAmount = yearlyPaymentAmount.value;
+	  
       apr = document.getElementById("apr");
       apr = apr.value;
 
       timeDuration = document.getElementById("timeDuration");
       timeDuration = timeDuration.value;  
 
-      alert(loanAmount + ", " + currentLoanDate + ", " + monthlyPaymentDate + ", " + monthlyPaymentAmount + ", " + dailyPaymentAmount +", " + apr + ", " + timeDuration);
+      alert(loanAmount + ", " + currentLoanDate + ", " + monthlyPaymentDate + ", " + yearlyPaymentAmount +", " + apr + ", " + timeDuration);
 
       //Store
       sessionStorage.loanAmount = loanAmount;
@@ -163,30 +156,41 @@
       sessionStorage.monthlyPaymentDate = monthlyPaymentDate;
 	  monthlyPaymentDate = sessionStorage.monthlyPaymentDate;
 	  
-	  sessionStorage.monthlyPaymentAmount = monthlyPaymentAmount;
-	  monthlyPaymentAmount = sessionStorage.monthlyPaymentAmount;
-	  
-	  sessionStorage.dailyPaymentAmount = dailyPaymentAmount;
-	  dailyPaymentAmount = sessionStorage.dailyPaymentAmount;
+	  sessionStorage.yearlyPaymentAmount = yearlyPaymentAmount;
+	  yearlyPaymentAmount = sessionStorage.yearlyPaymentAmount;
 	  
       sessionStorage.apr = apr;
 	  apr = sessionStorage.apr;
 	  
       sessionStorage.timeDuration = timeDuration;
 	  timeDuration = sessionStorage.timeDuration;
+
 	  
+	  var t = timeSpanGenerator(currentLoanDate, timeDuration);
 	  
-	  /*how to return elements to webpage
-      //Retrieve
-      document.getElementById("result").innerHTML = sessionStorage.currentLoanDate;
-	  */
-	  //debugging
-	  //var t = timeSpanGenerator(currentLoanDate, timeDuration);
+	  //var t = test();
+	  //console.log(t);
 	  
-	  var t = test();
-	  console.log(t);
+	  loanCalc(timeSpanGenerator(currentLoanDate, timeDuration), apr, loanAmount, yearlyPaymentAmount, monthlyPaymentDate);
+			
+	  var yDailyTrace = loanCalc(t, apr, loanAmount, yearlyPaymentAmount, monthlyPaymentDate)[0];
+	  var yMonthlyTrace = loanCalc(t, apr, loanAmount, yearlyPaymentAmount, monthlyPaymentDate)[1];
 	  
-	  //loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount);
+	  var dailyTrace = {
+		x: t,
+		y: yDailyTrace,
+		name: 'Daily Payments',
+		type: 'scatter'
+      };
+	  
+	  var monthlyTrace = {
+		x: t,
+		y: yMonthlyTrace,
+		name: 'Monthly Payments',
+		type: 'scatter'
+      };
+	  var data = [dailyTrace, monthlyTrace];
+	  
       Plotly.newPlot('myDiv', data);
     }
 
@@ -219,7 +223,7 @@
 		var timeDurationYears = parseInt(timeDuration);
 		var timeDurationDays =  timeDurationYears * 365;
 		//debugging
-		timeDurationDays = 35;
+		//timeDurationDays = 35;
 		
 		/*Put currentLoanDate as first element in array, 't'. 
 		*From the day entered to the last day for calculated timeDurationDays, 
@@ -239,105 +243,50 @@
 			month--;
 			t.push(newdate);
 		}
-		console.log(t);
+		//console.log(t);
 		return t;
 	}
 	
-	function loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount) {
-		/*console.log(t);
-		console.log(apr);
-		console.log(loanAmount);
-		console.log(dailyPaymentAmount);
-		console.log(monthlyPaymentDate);*/
+	function loanCalc(t, apr, loanAmount, yearlyPaymentAmount, monthlyPaymentDate) {
+		var apr = Number(apr);
+		var loanAmount = Number(loanAmount);
+		var yearlyPaymentAmount = Number(yearlyPaymentAmount);
 		
+		var monthlyPaymentAmount = yearlyPaymentAmount/12;
+		var dailyPaymentAmount   = yearlyPaymentAmount/365;
 		//let dpr be daily percentage rate 
 		var dpr = (apr/100)/365;
-		var loanAmount = Number(loanAmount);
-		var monthlyPaymentAmount = Number(monthlyPaymentAmount);
-		var dailyPaymentAmount = Number(dailyPaymentAmount);
 		
-		/*Determine what day it is, and what month, and count how many incrementations it takes to reach monthlyPaymentDate
-		 *Generate variable that determines what date the next payment is on
-		 *Increment through loop to compare strings and count iterations until string match for next payment date.
-		 */
 		var count = 0;
-		//These will be graphed on the y axis to the dailyTrace and monthlyTrace respectively
-		var principalDaily = [loanAmount];
-		var principalMonthly = 	[loanAmount];
-		console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
-		console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);
 		
-		//Make sure that the same total payment amount is being put towards principalDaily and principalMonthly
-		var additionalMonthlyPaymentAmount = dailyPaymentAmount;
+		var principalDaily = [loanAmount - dailyPaymentAmount];
+		var principalMonthly = 	[loanAmount];
 		
 		var currentDayFunction = function (t, count) { 
 			var currentDay = parseInt(t[count].split("-")[2]);
 			return currentDay;
 			}
-		console.log("currentDay = " + currentDayFunction(t,count) + ", count = " + count);
-		console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);
 		
-		//Initialize day 1 (count = 0) of loan repayments with a daily payment
-		principalDaily[count] = principalDaily[count] - dailyPaymentAmount;
-		console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
-		console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);
-		//increment to next day
+		//console.log('principalDaily'+'['+currentDayFunction(t,count)+']: ' + principalDaily[count] + ' principalMonthly'+'['+currentDayFunction(t,count)+']: ' + principalMonthly[count]);
 		count++;
 		
-		do {
-			console.log("currentDay = " + currentDayFunction(t,count) + ", count = " + count);
-			
-			//aggregate dailyPaymentAmount to additionalMonthlyPaymentAmount 
-			additionalMonthlyPaymentAmount = additionalMonthlyPaymentAmount + dailyPaymentAmount;
-			console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);
-			
-			principalDaily[count] = principalDaily[count - 1] + principalDaily[count - 1]*dpr - dailyPaymentAmount;
-			principalMonthly[count] = principalMonthly[count - 1] + principalMonthly[count - 1]*dpr;
-			console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
-			console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly); 
-			count++;
-			if (currentDayFunction(t,count) == monthlyPaymentDate) {
-				console.log("currentDay = " + currentDayFunction(t,count) + ", count = " + count);
-				console.log("in if block");
-				additionalMonthlyPaymentAmount = additionalMonthlyPaymentAmount + dailyPaymentAmount;
-				console.log("additionalMonthlyPaymentAmount = "+additionalMonthlyPaymentAmount);
-				principalDaily[count] = principalDaily[count - 1] + principalDaily[count - 1]*dpr - monthlyPaymentAmount - dailyPaymentAmount;
-				principalMonthly[count] = principalMonthly[count - 1] + principalMonthly[count - 1]*dpr - monthlyPaymentAmount - additionalMonthlyPaymentAmount;
-				console.log("principalDaily["+count+"] = " + principalDaily[count] +", principalDaily = "+principalDaily);
-				console.log("principalMonthly["+count+"] = " + principalMonthly[count] +", principalMonthly = "+principalMonthly);
-				count++;
+		
+		for(count; count < t.length; count++) {
+			if (currentDayFunction(t,count) != monthlyPaymentDate) {
+				principalDaily[count] = principalDaily[count - 1] + principalDaily[count - 1]*dpr - dailyPaymentAmount;
+				principalMonthly[count] = principalMonthly[count - 1] + principalMonthly[count - 1]*dpr;
+			} else {
+				principalDaily[count] = principalDaily[count - 1] + principalDaily[count - 1]*dpr - dailyPaymentAmount;
+				principalMonthly[count] = principalMonthly[count - 1] + principalMonthly[count - 1]*dpr -monthlyPaymentAmount;
 			}
-		} while (count < t.length)
-		console.log("success");
+			//console.log('principalDaily'+'['+currentDayFunction(t,count)+']: ' + principalDaily[count] + ' principalMonthly'+'['+currentDayFunction(t,count)+']: ' + principalMonthly[count]);
+		}
+		
 		var y = [principalDaily, principalMonthly];
 		
-		console.log(y);
+		//console.log(y);
 		return y;
 	}
-	function test() {
-		//make monthlyPaymentDate = 3rd
-		var t = ["2016-1-01", "2016-1-02", "2016-1-3"];
-		return t;
-	}
-	
-	/*var yDailyTrace = loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount)[0];
-	var yMonthlyTrace = loanCalc(t, apr, loanAmount, dailyPaymentAmount, monthlyPaymentDate, monthlyPaymentAmount)[1]; */
 
-    var dailyTrace = {
-      x: test(),
-      y: [1,3,6],
-      name: 'Daily Payments',
-      type: 'scatter'
-    };
-
-    var monthlyTrace = {
-      x: test(),
-      y: [2,4,7],
-      name: 'Monthly Payments',
-      type: 'scatter'
-    };
-
-  var data = [dailyTrace, monthlyTrace];
-  //Plotly.newPlot('myDiv', data);
   </script>
 </body>
